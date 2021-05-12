@@ -37,16 +37,7 @@ class MainActivity : AppCompatActivity() {
         callbackManager = CallbackManager.Factory.create()
         auth = FirebaseAuth.getInstance()
 
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.default_web_client_id))
-            .requestEmail()
-            .build()
-        googleSignInClient = GoogleSignIn.getClient(this, gso)
-
-        binding.googleSignInBtn.setOnClickListener {
-            signIn()
-        }
-
+        googleLogin()
         binding.facebookLoginBtn.setReadPermissions("email", "public_profile")
         binding.facebookLoginBtn.registerCallback(
             callbackManager,
@@ -60,10 +51,23 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 override fun onError(error: FacebookException?) {
-                    Log.i(TAG, "Error: $error.message.toString()")
+                    Log.w("Error", "Error: $error.message.toString()")
                 }
 
             })
+    }
+
+    private fun googleLogin() {
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(getString(R.string.default_web_client_id))
+            .requestEmail()
+            .build()
+        googleSignInClient = GoogleSignIn.getClient(this, gso)
+
+        binding.googleSignInBtn.setOnClickListener {
+            signIn()
+        }
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -107,18 +111,23 @@ class MainActivity : AppCompatActivity() {
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     val user = auth.currentUser
-                    Log.i(TAG, "Success ")
+                    Log.w(TAG, "Success ")
                     updateUI(user)
-                } else {
-                    Log.i(TAG, "Failed")
+                }else {
+                    Log.w(TAG, "Failed")
                     Toast.makeText(this, "Authentication Failed", Toast.LENGTH_SHORT).show()
                 }
+            }
+            .addOnFailureListener(this){
+                Log.w(TAG, it.localizedMessage.toString())
             }
 
     }
 
     private fun updateUI(user: FirebaseUser?) {
-
+        val intent = Intent(this, ProfileActivity::class.java)
+        intent.putExtra("user", user)
+        startActivity(intent)
     }
 
     private fun signIn() {
