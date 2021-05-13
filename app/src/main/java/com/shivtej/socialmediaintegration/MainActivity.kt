@@ -126,8 +126,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateUI(user: FirebaseUser?) {
         val intent = Intent(this, ProfileActivity::class.java)
-        intent.putExtra("user", user)
-        startActivity(intent)
+        if(user != null){
+            startActivity(intent)
+        }
+
     }
 
     private fun signIn() {
