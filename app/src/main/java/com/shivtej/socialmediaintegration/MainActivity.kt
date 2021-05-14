@@ -26,6 +26,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var callbackManager: CallbackManager
     private lateinit var auth: FirebaseAuth
     private lateinit var googleSignInClient: GoogleSignInClient
+
     private val TAG = "MainActivity"
     private val RC_SIGN_IN = 1001
 
@@ -38,7 +39,7 @@ class MainActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
 
         googleLogin()
-        binding.facebookLoginBtn.setReadPermissions("email", "public_profile")
+        binding.facebookLoginBtn.setReadPermissions("email", "public_profile", "user-friends")
         binding.facebookLoginBtn.registerCallback(
             callbackManager,
             object : FacebookCallback<LoginResult> {
@@ -126,7 +127,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateUI(user: FirebaseUser?) {
         val intent = Intent(this, ProfileActivity::class.java)
-        if(user != null){
+        if (user != null) {
             startActivity(intent)
         }
 
@@ -135,5 +136,10 @@ class MainActivity : AppCompatActivity() {
     private fun signIn() {
         val signInIntent = googleSignInClient.signInIntent
         startActivityForResult(signInIntent, RC_SIGN_IN)
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        finish()
     }
 }
