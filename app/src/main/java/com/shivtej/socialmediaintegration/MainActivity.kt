@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
 
         googleLogin()
-        binding.facebookLoginBtn.setReadPermissions("email", "public_profile", "user-friends")
+        binding.facebookLoginBtn.setReadPermissions("email", "public_profile", "user_friends")
         binding.facebookLoginBtn.registerCallback(
             callbackManager,
             object : FacebookCallback<LoginResult> {
